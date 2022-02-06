@@ -1,26 +1,25 @@
 from fastapi import FastAPI, Depends, Request
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from collector.coinmarketcap import get_cryptocurrencies
-from functools import lru_cache
-from config import Settings
+from api.main_router import router as main_rotuer
 
-app = FastAPI()
+def include_routers(app):
+    app.include_router(main_rotuer)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+def configure_static_files(app):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@lru_cache()
-def get_settings():
-    return Settings()
+def start_application():
+    app = FastAPI()
+    include_routers(app)
+    configure_static_files(app)
+    return app
 
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request, settings: Settings = Depends(get_settings)):
-    items = get_cryptocurrencies({
-        "URL": settings.coinmarketcap_apiurl,
-        "APIKEY": settings.coinmarketcap_apikey
-    })
-    return templates.TemplateResponse('index.html', {'request': request, 'coins': items["data"]})
+app = start_application()
+
+
+
+
+
+
 
 
