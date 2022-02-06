@@ -1,4 +1,4 @@
-from requests import Request, Session
+from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
 
@@ -12,7 +12,7 @@ def get_cryptocurrencies(credentials):
     }
     headers = {
       'Accepts': 'application/json',
-      'X-CMC_PRO_API_KEY': credentials["URL"],
+      'X-CMC_PRO_API_KEY': credentials["APIKEY"],
     }
 
     session = Session()
