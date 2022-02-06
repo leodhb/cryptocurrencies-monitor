@@ -1,0 +1,9 @@
+thead {
+    background: black;
+    color: white;
+}
+
+table {
+    border: solid 1px black;
+    border-radius: 50%;
+}
