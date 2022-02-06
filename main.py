@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -15,13 +15,12 @@ templates = Jinja2Templates(directory="templates")
 def get_settings():
     return Settings()
 
-@app.get("/")
-async def root(settings: Settings = Depends(get_settings)):
-    return get_cryptocurrencies(
-        {
-            "URL": settings.coinmarketcap_apiurl,
-            "APIKEY": settings.coinmarketcap_apikey
-        }
-    )
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request, settings: Settings = Depends(get_settings)):
+    items = get_cryptocurrencies({
+        "URL": settings.coinmarketcap_apiurl,
+        "APIKEY": settings.coinmarketcap_apikey
+    })
+    return templates.TemplateResponse('index.html', {'request': request, 'coins': items["data"]})
 
 
